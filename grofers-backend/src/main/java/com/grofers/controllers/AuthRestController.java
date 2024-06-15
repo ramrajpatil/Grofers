@@ -20,7 +20,7 @@ import com.grofers.dtos.JWTAuthRequest;
 import com.grofers.dtos.JWTAuthResponse;
 import com.grofers.dtos.UserDto;
 import com.grofers.securitys.JWTTokenHelper;
-import com.grofers.services.UserService;
+import com.grofers.services.IUserService;
 
 import jakarta.validation.Valid;
 
@@ -39,7 +39,7 @@ public class AuthRestController {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	private UserService uService;
+	private IUserService uService;
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 

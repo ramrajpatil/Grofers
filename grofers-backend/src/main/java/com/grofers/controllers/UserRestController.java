@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.grofers.dtos.ResponseDTO;
 import com.grofers.dtos.UserDto;
-import com.grofers.services.UserService;
+import com.grofers.services.IUserService;
 
 import jakarta.validation.Valid;
 
@@ -32,7 +32,7 @@ public class UserRestController {
 	private Logger logger = LoggerFactory.getLogger(UserRestController.class);
 	
 	@Autowired
-	private UserService uService;
+	private IUserService uService;
 	
 	// GET - getting all users
 	@GetMapping("/")

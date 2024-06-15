@@ -6,7 +6,7 @@ import com.grofers.dtos.UserDto;
 import com.grofers.pojos.User;
 
 
-public interface UserService {
+public interface IUserService {
 
 	List<UserDto> fetchAllUsers();
 	
