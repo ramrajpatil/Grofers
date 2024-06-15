@@ -1,7 +1,5 @@
 package com.grofers.dtos;
 
-import com.grofers.pojos.User;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +8,5 @@ import lombok.Setter;
 public class JWTAuthResponse {
 
 	private String token;
-	
-	private User user;
-	
+
 }

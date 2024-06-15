@@ -2,5 +2,5 @@ package com.grofers.pojos;
 
 public enum UserRole {
 
-	ADMIN, CUSTOMER;
+	ROLE_ADMIN, ROLE_CUSTOMER;
 }

@@ -31,13 +31,12 @@ import jakarta.servlet.http.HttpServletRequest;
 @Configuration
 @EnableWebSecurity // Enables Spring Security's web security support
 @EnableMethodSecurity(prePostEnabled = true) // Enables Spring Security's method security support
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebMvc
 public class SecurityConfig {
 
 	public static final String[] PUBLIC_URLS = { 
-			"/api/auth/login", 
-			"/api/auth/register", 
+			"/auth/login", // For login
+			"/users",  // For registration
 			"/v3/api-docs",
 			"/v2/api-docs", 
 			"/swagger-resources/**", 
@@ -48,8 +47,6 @@ public class SecurityConfig {
 	@Autowired
 	private CustomUserDetailService customUserDetailService;
 
-//	@Autowired
-//	private JWTAuthenticationEntryPoint entryPoint;
 
 	@Autowired
 	private JWTAuthenticationFilter filter;
@@ -65,9 +62,7 @@ public class SecurityConfig {
 				.requestMatchers(PUBLIC_URLS).permitAll() // Permit access to public URLs without authentication
 				.requestMatchers(HttpMethod.GET).permitAll()
 				.anyRequest().authenticated() // All other requests require authentication
-		).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Use stateless
-																										// session
-																										// management
+		).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Use stateless session management
 		)
 				.cors(cors ->{
 					cors.configurationSource(new CorsConfigurationSource() {

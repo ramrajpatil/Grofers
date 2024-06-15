@@ -46,6 +46,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 			try {
 
 				username = this.jwtTokenHelper.getUsernameFromToken(token);
+				
+				System.out.println("In JWTAuthenticationFilter line no 50... "+username);
+				
 			} catch (IllegalArgumentException e) {
 				System.out.println("Unable to get Jwt token " + e.getMessage());
 
@@ -64,6 +67,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
 			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
+			
 			if (this.jwtTokenHelper.validateToken(token, userDetails)) {
 
 				// All going well, and authenticate it.
@@ -72,8 +76,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 						new UsernamePasswordAuthenticationToken(userDetails,
 						null, userDetails.getAuthorities());
 
+				
 				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
 				SecurityContextHolder.getContext().setAuthentication(authToken);
 
 			} else

@@ -46,7 +46,7 @@ public class User implements UserDetails {
 	@Column(length = 30, nullable = false, unique = true)
 	private String email;
 
-	@Column(length = 20, nullable = false)
+	@Column(nullable = false)
 	private String password;
 
 	@Enumerated(EnumType.STRING)
@@ -65,14 +65,16 @@ public class User implements UserDetails {
 		this.password = password;
 		this.role = role;
 	}
+	
+	
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 
 		List<SimpleGrantedAuthority> grantedAuths = new ArrayList<>();
 
-		grantedAuths.add(new SimpleGrantedAuthority(UserRole.ADMIN.name()));
-		grantedAuths.add(new SimpleGrantedAuthority(UserRole.CUSTOMER.name()));
+		grantedAuths.add(new SimpleGrantedAuthority(UserRole.ROLE_ADMIN.name()));
+		grantedAuths.add(new SimpleGrantedAuthority(UserRole.ROLE_CUSTOMER.name()));
 
 		return grantedAuths;
 	}
@@ -107,6 +109,14 @@ public class User implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true; // Assuming all users are enabled for this example
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", name=" + name + ", email=" + email + ", password=" + password + ", role="
+				+ role + "]";
 	}
 
 }

@@ -82,6 +82,8 @@ public class UserServiceImpl implements UserService {
 		User user = uRepo.findById(userId)
 				.orElseThrow(() -> new UserHandlingException("User with given id: "+userId+" does not exist."));
 		
+		uRepo.delete(user);
+		
 		return "User with userdId: "+userId+" deleted successfully !!!";
 	}
 
@@ -92,7 +94,7 @@ public class UserServiceImpl implements UserService {
 		
 		
 		// Setting the new registering user as customer.
-		user.setRole(UserRole.CUSTOMER);
+		user.setRole(UserRole.ROLE_CUSTOMER);
 		
 		User registeredUser = this.uRepo.save(user);
 		
