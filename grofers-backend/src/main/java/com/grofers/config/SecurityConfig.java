@@ -6,7 +6,7 @@ import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -18,98 +18,104 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.grofers.securitys.CustomBasicAuthenticationEntryPoint;
 import com.grofers.securitys.CustomUserDetailService;
 import com.grofers.securitys.JWTAuthenticationFilter;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @Configuration
-@EnableWebSecurity // Enables Spring Security's web security support
-@EnableMethodSecurity(prePostEnabled = true) // Enables Spring Security's method security support
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @EnableWebMvc
 public class SecurityConfig {
 
-	public static final String[] PUBLIC_URLS = { 
-			"/auth/login", // For login
-			"/users",  // For registration
-			"/v3/api-docs",
-			"/v2/api-docs", 
-			"/swagger-resources/**", 
-			"/swagger-ui*/**", // Adding the Swagger UI endpoint
-			"/webjars/**" 
-			};
+    public static final String[] PUBLIC_URLS = { 
+        "/auth/login", 
+        "/users", 
+        "/v3/api-docs",
+        "/v2/api-docs", 
+        "/swagger-resources/**", 
+        "/swagger-ui*/**", 
+        "/webjars/**"
+    };
+    
+    @Autowired
+    private CustomUserDetailService customUserDetailService;
 
-	@Autowired
-	private CustomUserDetailService customUserDetailService;
+    @Autowired
+    private JWTAuthenticationFilter filter;
 
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+            .csrf(csrf -> csrf.disable())
+            .formLogin(Customizer.withDefaults())
+            .httpBasic(Customizer.withDefaults())
+            .authorizeHttpRequests(auths -> auths
+                .requestMatchers(PUBLIC_URLS).permitAll()
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .exceptionHandling(exceptionHandling -> 
+                exceptionHandling
+                    .accessDeniedHandler(customAccessDeniedHandler())
+                    .authenticationEntryPoint(customAuthenticationEntryPoint())
+            )
+            .authenticationProvider(daoAuthenticationProvider())
+            .addFilterBefore(this.filter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+    }
 
-	@Autowired
-	private JWTAuthenticationFilter filter;
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
+            configuration.setAllowedMethods(Collections.singletonList("*"));
+            configuration.setAllowCredentials(true);
+            configuration.setAllowedHeaders(Collections.singletonList("*"));
+            configuration.setExposedHeaders(Arrays.asList("Authorization"));
+            return configuration;
+        };
+    }
 
-	// Configures the security filter chain
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-		return httpSecurity.csrf(csrf -> csrf.disable())
-				.formLogin(Customizer.withDefaults())
-				.httpBasic(Customizer.withDefaults())
-				.authorizeHttpRequests(auths -> 
-				auths // For docs
-				.requestMatchers(PUBLIC_URLS).permitAll() // Permit access to public URLs without authentication
-				.requestMatchers(HttpMethod.GET).permitAll()
-				.anyRequest().authenticated() // All other requests require authentication
-		).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Use stateless session management
-		)
-				.cors(cors ->{
-					cors.configurationSource(new CorsConfigurationSource() {
-						@Override
-						public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-						CorsConfiguration configuration= new CorsConfiguration();
-							configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
-							configuration.setAllowedMethods(Collections.singletonList("*"));
-							configuration.setAllowCredentials(true);
-							configuration.setAllowedHeaders(Collections.singletonList("*"));
-							configuration.setExposedHeaders(Arrays.asList("Authorization"));
-							return configuration;
-						}
-					});
-				})
-				.authenticationProvider(daoAuthenticationProvider()) // Configure authentication provider
-				.addFilterBefore(this.filter, UsernamePasswordAuthenticationFilter.class) // Add custom filter before
-																							// UsernamePasswordAuthenticationFilter
-				.build();
-	}
+    @Bean
+    public AccessDeniedHandler customAccessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"message\": \"You are not authorized to access this resource.\", \"success\": false}");
+        };
+    }
 
-	// Configures the authentication provider
-	@Bean
-	public DaoAuthenticationProvider daoAuthenticationProvider() {
-		// Return your implementation of AuthenticationProvider here
-		// For example:
-		// return new MyAuthenticationProvider();
+    @Bean
+    public CustomBasicAuthenticationEntryPoint customAuthenticationEntryPoint() {
+        CustomBasicAuthenticationEntryPoint entryPoint = new CustomBasicAuthenticationEntryPoint();
+        entryPoint.afterPropertiesSet();
+        return entryPoint;
+    }
 
-		// Configures a DAO-based authentication provider with custom user details
-		// service and password encoder
-		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		authProvider.setUserDetailsService(this.customUserDetailService);
-		authProvider.setPasswordEncoder(passwordEncoder());
-		return authProvider;
-	}
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(this.customUserDetailService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
 
-	// Configures the password encoder bean
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(); // Uses BCryptPasswordEncoder for password encoding
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	// Configures the authentication manager bean
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-		return config.getAuthenticationManager(); // Retrieves the authentication manager from the
-													// AuthenticationConfiguration
-	}	
-
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 }

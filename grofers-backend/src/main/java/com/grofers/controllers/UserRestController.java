@@ -14,67 +14,73 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.grofers.config.AppConstants;
 import com.grofers.dtos.ResponseDTO;
 import com.grofers.dtos.UserDto;
+import com.grofers.dtos.UserResponseDto;
 import com.grofers.services.IUserService;
 
 import jakarta.validation.Valid;
-
 
 @RestController
 @RequestMapping("/users")
 @CrossOrigin
 public class UserRestController {
 
-	
-	private Logger logger = LoggerFactory.getLogger(UserRestController.class);
-	
-	@Autowired
-	private IUserService uService;
-	
-	// GET - getting all users
-	@GetMapping("/")
-	public ResponseEntity<?> getAllUsers(){
-		this.logger.info("In get all Users request.");
-		return ResponseEntity.ok(this.uService.fetchAllUsers());
-	}
-	
-	// GET - get single user
-	@GetMapping("/{userId}")
-	public ResponseEntity<?> getSingleUser(@PathVariable Integer userId){
-		return ResponseEntity.ok(this.uService.fetchSingleUser(userId));
-		
-	}
-	
-	// POST - create user
-	@PostMapping("/")
-	public ResponseEntity<?> createUser(@Valid @RequestBody UserDto userDto){
-		UserDto createdUserDto = this.uService.addNewUser(userDto);
-		
-		return new ResponseEntity<>(createdUserDto, HttpStatus.CREATED);
-	}
-	
-	// PUT- update user
-	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping("/{userId}")
-	public ResponseEntity<UserDto> updateUserDetails(@PathVariable Integer userId, @Valid @RequestBody UserDto userDto) {
-		this.logger.info("in updateUserDetails() of "+userId);
-		this.logger.info("Name",userDto.getName());
-		this.logger.info("Email",userDto.getEmail());
-		this.logger.info("Password",userDto.getPassword());
-		return new ResponseEntity<>(this.uService.updateUser(userDto, userId), HttpStatus.OK);
-	}
-	
-	// ADMIN
-	// DELETE - delete user
-	@PreAuthorize("hasRole('ADMIN')")
-	@DeleteMapping("/{userId}")
-	public ResponseEntity<?> deleteUserDetails(@PathVariable Integer userId){
-		this.uService.deleteUser(userId);
-//		return new ResponseEntity<>(Map.of("message","User deleted successfully"), HttpStatus.OK);
-		return new ResponseEntity<>(new ResponseDTO("User deleted successfully", true), HttpStatus.OK);
-	}
-	
+    private final Logger logger = LoggerFactory.getLogger(UserRestController.class);
+
+    @Autowired
+    private IUserService uService;
+
+    // GET - getting all users: Only admin can fetch all users.
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public ResponseEntity<UserResponseDto> getAllUsers( // default pageNumber:0, pageSize:5, sortBy:userId, sortDir:asc.
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber, 
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.USER_SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir) {
+
+        logger.info("In get all Users request of: {}", getClass().getName());
+        UserResponseDto userResponseDto = uService.fetchAllUsers(pageNumber, pageSize, sortBy, sortDir);
+        return ResponseEntity.ok(userResponseDto);
+    }
+
+    // GET - get single user
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getSingleUser(@PathVariable Integer userId) {
+        UserDto userDto = uService.fetchSingleUser(userId);
+        return ResponseEntity.ok(userDto);
+    }
+
+    // POST - create user: Only admin can create a user.
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin")
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
+        UserDto createdUserDto = uService.addNewUser(userDto);
+        return new ResponseEntity<>(createdUserDto, HttpStatus.CREATED);
+    }
+
+    // PUT - update user: Only admin can update user details.
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserDto> updateUserDetails(@PathVariable Integer userId, @Valid @RequestBody UserDto userDto) {
+        logger.info("In updateUserDetails() for userId: {}", userId);
+        logger.info("Name: {}", userDto.getName());
+        logger.info("Email: {}", userDto.getEmail());
+        // Omitting logging password for security reasons
+        UserDto updatedUserDto = uService.updateUser(userDto, userId);
+        return new ResponseEntity<>(updatedUserDto, HttpStatus.OK);
+    }
+
+    // DELETE - delete user: Only admin can delete a user.
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<ResponseDTO> deleteUserDetails(@PathVariable Integer userId) {
+        uService.deleteUser(userId);
+        return new ResponseEntity<>(new ResponseDTO("User with id: " + userId + " deleted successfully", true), HttpStatus.OK);
+    }
 }

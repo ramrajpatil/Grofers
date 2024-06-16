@@ -5,10 +5,15 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.grofers.dtos.UserDto;
+import com.grofers.dtos.UserResponseDto;
 import com.grofers.exceptions.UserHandlingException;
 import com.grofers.pojos.User;
 import com.grofers.pojos.UserRole;
@@ -31,16 +36,31 @@ public class UserServiceImpl implements IUserService {
 	
 	
 	@Override
-	public List<UserDto> fetchAllUsers() {
-		List<User> users = this.uRepo.findAll();
+	public UserResponseDto fetchAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+		// Paging and sorting 
+		Sort sort = (sortDir.equalsIgnoreCase("asc")) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 		
+		Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+		
+		Page<User> pagedUsers = this.uRepo.findAll(pageable);
+		List<User> users = pagedUsers.getContent();
+				
 		List<UserDto> userDtos = users
 				.stream()
 				.map((u) -> 
 				this.mapper.map(u, UserDto.class))
 				.collect(Collectors.toList());
 		
-		return userDtos;
+		UserResponseDto userResponseDto = new UserResponseDto();
+		userResponseDto.setUserList(userDtos);
+		userResponseDto.setPageNumber(pagedUsers.getNumber());
+		userResponseDto.setPageSize(pagedUsers.getSize());
+		userResponseDto.setTotalElements(pagedUsers.getTotalElements());
+		userResponseDto.setTotalPages(pagedUsers.getTotalPages());
+		userResponseDto.setLastPage(pagedUsers.isLast());
+		
+		
+		return userResponseDto;
 	}
 
 	@Override
@@ -56,11 +76,16 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public UserDto addNewUser(UserDto userDto) {
 		
-		User transientUser = this.mapper.map(userDto, User.class);
+		User user = this.mapper.map(userDto, User.class);
+		user.setPassword(this.encoder.encode(user.getPassword()));
 		
-		User persistentUser = this.uRepo.save(transientUser);
 		
-		return this.mapper.map(persistentUser, UserDto.class);
+		// Setting the new registering user as customer.
+		user.setRole(UserRole.ROLE_CUSTOMER);
+		
+		User newUser = this.uRepo.save(user);
+		
+		return this.mapper.map(newUser, UserDto.class);
 	}
 
 	@Override
@@ -70,7 +95,7 @@ public class UserServiceImpl implements IUserService {
 				
 		user.setName(userDto.getName());
 		user.setEmail(userDto.getEmail());
-		user.setPassword(userDto.getPassword());
+		user.setPassword(encoder.encode(userDto.getPassword()));
 		
 		User updatedUser = this.uRepo.save(user);
 		

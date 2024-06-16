@@ -1,14 +1,15 @@
 package com.grofers.services;
 
-import java.util.List;
-
 import com.grofers.dtos.UserDto;
-import com.grofers.pojos.User;
+import com.grofers.dtos.UserResponseDto;
 
 
 public interface IUserService {
 
-	List<UserDto> fetchAllUsers();
+//	List<UserDto> fetchAllUsers();
+	// Implementing paging and sorting.
+	UserResponseDto fetchAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
+	
 	
 	UserDto fetchSingleUser(Integer userId);
 	
