@@ -1,15 +1,14 @@
 package com.grofers.services;
 
-import java.util.List;
-
 import com.grofers.dtos.CategoryDto;
+import com.grofers.dtos.CategoryResponseDto;
 
 public interface ICategoryService {
 
 	
-	List<CategoryDto> fetchAllCategories();
+	CategoryResponseDto fetchAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
 	
-	CategoryDto createCategory(CategoryDto catDto);
+	CategoryDto addNewCategory(CategoryDto catDto);
 	
 	CategoryDto updateCategory(CategoryDto catDto, Integer catId);
 	

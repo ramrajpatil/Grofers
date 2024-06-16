@@ -44,15 +44,15 @@ public class UserRestController {
             @RequestParam(value = "sortBy", defaultValue = AppConstants.USER_SORT_BY, required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir) {
 
-        logger.info("In get all Users request of: {}", getClass().getName());
-        UserResponseDto userResponseDto = uService.fetchAllUsers(pageNumber, pageSize, sortBy, sortDir);
+        this.logger.info("In get all Users request of: {}", getClass().getName());
+        UserResponseDto userResponseDto = this.uService.fetchAllUsers(pageNumber, pageSize, sortBy, sortDir);
         return ResponseEntity.ok(userResponseDto);
     }
 
     // GET - get single user
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getSingleUser(@PathVariable Integer userId) {
-        UserDto userDto = uService.fetchSingleUser(userId);
+        UserDto userDto = this.uService.fetchSingleUser(userId);
         return ResponseEntity.ok(userDto);
     }
 
@@ -60,7 +60,7 @@ public class UserRestController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
-        UserDto createdUserDto = uService.addNewUser(userDto);
+        UserDto createdUserDto = this.uService.addNewUser(userDto);
         return new ResponseEntity<>(createdUserDto, HttpStatus.CREATED);
     }
 
@@ -72,7 +72,7 @@ public class UserRestController {
         logger.info("Name: {}", userDto.getName());
         logger.info("Email: {}", userDto.getEmail());
         // Omitting logging password for security reasons
-        UserDto updatedUserDto = uService.updateUser(userDto, userId);
+        UserDto updatedUserDto = this.uService.updateUser(userDto, userId);
         return new ResponseEntity<>(updatedUserDto, HttpStatus.OK);
     }
 
@@ -80,7 +80,7 @@ public class UserRestController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<ResponseDTO> deleteUserDetails(@PathVariable Integer userId) {
-        uService.deleteUser(userId);
+        this.uService.deleteUser(userId);
         return new ResponseEntity<>(new ResponseDTO("User with id: " + userId + " deleted successfully", true), HttpStatus.OK);
     }
 }

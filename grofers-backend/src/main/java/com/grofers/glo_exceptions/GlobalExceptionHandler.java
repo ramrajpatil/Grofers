@@ -21,7 +21,7 @@ import com.grofers.exceptions.UserHandlingException;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(NotFoundException.class)
-	public ResponseEntity<ResponseDTO> handleResourceNotFoundExceptionHandler(NotFoundException ex) {
+	public ResponseEntity<ResponseDTO> handleNotFoundExceptionHandler(NotFoundException ex) {
 
 		String message = ex.getMessage();
 
