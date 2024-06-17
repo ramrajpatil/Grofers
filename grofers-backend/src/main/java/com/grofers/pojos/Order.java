@@ -33,18 +33,23 @@ public class Order {
     private LocalDate orderDate;
 
     private LocalDate deliveryDate;
+    
+    private double totalAmount;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<OrderDetail> orderDetail = new HashSet<>();
+    private Set<OrderDetail> orderDetails = new HashSet<>();
 
     public double getTotalAmount() {
-        return orderDetail.stream()
-                            .mapToDouble(OrderDetail::getTotalPrice)
-                            .sum();
+    	
+    	this.totalAmount = orderDetails.stream()
+        .mapToDouble(OrderDetail::getTotalPrice)
+        .sum();
+    	
+        return this.totalAmount;
     }
 
     @Override
