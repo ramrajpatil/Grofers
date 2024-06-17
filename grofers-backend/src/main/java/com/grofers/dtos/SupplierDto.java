@@ -6,15 +6,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDto {
+public class SupplierDto {
+	
+	private Integer supplierId;
 
-	private Integer categoryId;
-	
-	@NotEmpty(message = "Category name must not be empty.")
+	@NotEmpty(message = "Supplier name cannot be empty.")
 	private String name;
-	
+
+	@NotEmpty(message = "Supplier email cannot be empty.")
+	private String email;
 }

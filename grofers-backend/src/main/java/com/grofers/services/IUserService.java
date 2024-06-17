@@ -14,7 +14,7 @@ public interface IUserService {
 	UserDto fetchSingleUser(Integer userId);
 	
 	
-	UserDto addNewUser(UserDto userDto);
+	UserDto addNewUser(UserDto userDto, String choice);
 	
 	UserDto updateUser(UserDto userDto, Integer userId);
 	

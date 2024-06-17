@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.grofers.dtos.CategoryDto;
 import com.grofers.dtos.CategoryResponseDto;
+import com.grofers.exceptions.DuplicateEntryException;
 import com.grofers.exceptions.NotFoundException;
 import com.grofers.pojos.Category;
 import com.grofers.repos.CategoryRepository;
@@ -72,12 +73,18 @@ public class CategoryServiceImpl implements ICategoryService {
 
 	@Override
 	public CategoryDto addNewCategory(CategoryDto catDto) {
+		if (catRepo.existsByName(catDto.getName())) {
+            throw new DuplicateEntryException("Category name must be unique.");
+        }
+		else {
+		
 		Category category = this.mapper.map(catDto, Category.class);
 		
 		Category savedCategory = this.catRepo.save(category);
 		
 		
 		return this.mapper.map(savedCategory, CategoryDto.class);
+		}
 	}
 
 	@Override

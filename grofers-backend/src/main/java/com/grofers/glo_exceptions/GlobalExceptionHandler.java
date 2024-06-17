@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.grofers.dtos.ResponseDTO;
+import com.grofers.exceptions.DuplicateEntryException;
 import com.grofers.exceptions.NotFoundException;
 import com.grofers.exceptions.UserHandlingException;
 
@@ -61,6 +62,16 @@ public class GlobalExceptionHandler {
 
 		ResponseDTO response = new ResponseDTO(message, false);
 
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(DuplicateEntryException.class)
+	public ResponseEntity<ResponseDTO> handleDuplicateCategoryNameException(DuplicateEntryException ex) {
+		
+		String message = ex.getMessage();
+		
+		ResponseDTO response = new ResponseDTO(message, false);
+		
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 	

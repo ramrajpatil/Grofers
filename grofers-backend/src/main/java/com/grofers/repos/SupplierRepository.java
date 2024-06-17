@@ -8,4 +8,6 @@ import com.grofers.pojos.Supplier;
 @Repository
 public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
 
+	boolean existsByEmail(String email);
+
 }

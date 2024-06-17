@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.grofers.dtos.UserDto;
 import com.grofers.dtos.UserResponseDto;
+import com.grofers.exceptions.DuplicateEntryException;
 import com.grofers.exceptions.UserHandlingException;
 import com.grofers.pojos.User;
 import com.grofers.pojos.UserRole;
@@ -74,18 +75,25 @@ public class UserServiceImpl implements IUserService {
 
 
 	@Override
-	public UserDto addNewUser(UserDto userDto) {
-		
-		User user = this.mapper.map(userDto, User.class);
-		user.setPassword(this.encoder.encode(user.getPassword()));
-		
-		
-		// Setting the new registering user as customer.
-		user.setRole(UserRole.ROLE_CUSTOMER);
-		
-		User newUser = this.uRepo.save(user);
-		
-		return this.mapper.map(newUser, UserDto.class);
+	public UserDto addNewUser(UserDto userDto, String choice) {
+		if (uRepo.existsByEmail(userDto.getEmail())) {
+			throw new DuplicateEntryException("User email must be unique.");
+		} else {
+
+			User user = this.mapper.map(userDto, User.class);
+			user.setPassword(this.encoder.encode(user.getPassword()));
+
+			// Setting the new registering user as customer.
+
+			if (choice.equalsIgnoreCase("admin"))
+				user.setRole(UserRole.ROLE_ADMIN);
+			else
+				user.setRole(UserRole.ROLE_CUSTOMER);
+
+			User newUser = this.uRepo.save(user);
+
+			return this.mapper.map(newUser, UserDto.class);
+		}
 	}
 
 	@Override

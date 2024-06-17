@@ -1,8 +1,8 @@
 package com.grofers.pojos;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -24,54 +24,51 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "orders")
-
 public class Order {
 
-//	orderId, userId, products (a list of productIds), orderDate, deliveryDate, and totalAmount.
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer orderId;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer orderId;
+    private LocalDate orderDate;
 
-	private LocalDate orderDate;
+    private LocalDate deliveryDate;
 
-	private LocalDate deliveryDate;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-	private double totalAmount;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OrderDetail> orderDetail = new HashSet<>();
 
-	@JoinColumn(name = "user_id")
-	@ManyToOne
-	private User user;
+    public double getTotalAmount() {
+        return orderDetail.stream()
+                            .mapToDouble(OrderDetail::getTotalPrice)
+                            .sum();
+    }
 
-	
-	@OneToMany(orphanRemoval = true, mappedBy = "order", cascade = CascadeType.ALL)
-	private List<Product> products = new ArrayList<>();
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((orderId == null) ? 0 : orderId.hashCode());
+        return result;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((orderId == null) ? 0 : orderId.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Order other = (Order) obj;
-		if (orderId == null) {
-			if (other.orderId != null)
-				return false;
-		} else if (!orderId.equals(other.orderId))
-			return false;
-		return true;
-	}
-
-	
-	
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Order other = (Order) obj;
+        if (orderId == null) {
+            if (other.orderId != null)
+                return false;
+        } else if (!orderId.equals(other.orderId))
+            return false;
+        return true;
+    }
 }

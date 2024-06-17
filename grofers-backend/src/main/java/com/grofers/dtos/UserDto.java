@@ -1,14 +1,11 @@
 package com.grofers.dtos;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.grofers.pojos.Order;
-import com.grofers.pojos.Product;
 import com.grofers.pojos.UserRole;
 
 import jakarta.validation.constraints.Email;
@@ -39,11 +36,9 @@ public class UserDto {
 
 	private UserRole role;
 
-	private List<Product> products = new ArrayList<>();
-
 	private Set<Order> orders = new HashSet<>();// to avoid duplication of order.
 
-	@JsonProperty
+	@JsonProperty // Instruction to de-serialize password.
 	public void setPassword(String password) {
 		this.password = password;
 	}

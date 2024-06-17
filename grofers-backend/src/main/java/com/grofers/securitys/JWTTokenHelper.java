@@ -62,7 +62,7 @@ public class JWTTokenHelper {
 		// Build and sign the JWT token with claims, subject, issuedAt, expiration, and
 		// signing key
 		return Jwts.builder().setClaims(claims).setSubject(username).setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + AppConstants.JWT_TOKEN_VALIDITY * 120)) // Token expires in 120 seconds
+				.setExpiration(new Date(System.currentTimeMillis() + AppConstants.JWT_TOKEN_VALIDITY * 120))
 				.signWith(getSignKey(), SignatureAlgorithm.HS256) // Signing the token with HMAC SHA-256 algorithm
 				.compact(); // Compact the JWT token into its final string representation
 	}

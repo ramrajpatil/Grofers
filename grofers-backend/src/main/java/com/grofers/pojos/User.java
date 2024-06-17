@@ -53,11 +53,10 @@ public class User implements UserDetails {
 	private UserRole role;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	private List<Product> products = new ArrayList<>();
-
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Set<Order> orders = new HashSet<>();// to avoid duplication of order.
 
+	
+	
 	public User(String name, String email, String password, UserRole role) {
 		super();
 		this.name = name;
@@ -73,8 +72,7 @@ public class User implements UserDetails {
 
 		List<SimpleGrantedAuthority> grantedAuths = new ArrayList<>();
 
-		grantedAuths.add(new SimpleGrantedAuthority(UserRole.ROLE_ADMIN.name()));
-		grantedAuths.add(new SimpleGrantedAuthority(UserRole.ROLE_CUSTOMER.name()));
+		grantedAuths.add(new SimpleGrantedAuthority(this.role.name()));
 
 		return grantedAuths;
 	}
@@ -111,12 +109,5 @@ public class User implements UserDetails {
 		return true; // Assuming all users are enabled for this example
 	}
 
-
-
-	@Override
-	public String toString() {
-		return "User [userId=" + userId + ", name=" + name + ", email=" + email + ", password=" + password + ", role="
-				+ role + "]";
-	}
 
 }

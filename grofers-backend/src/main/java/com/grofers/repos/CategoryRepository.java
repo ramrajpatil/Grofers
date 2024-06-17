@@ -8,4 +8,6 @@ import com.grofers.pojos.Category;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
+	boolean existsByName(String name);
+	
 }

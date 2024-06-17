@@ -56,11 +56,13 @@ public class UserRestController {
         return ResponseEntity.ok(userDto);
     }
 
-    // POST - create user: Only admin can create a user.
+    // POST - create user: Only admin can create a user. Admin has option to create a customer or admin by specifying so.
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin")
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
-        UserDto createdUserDto = this.uService.addNewUser(userDto);
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto,
+    		@RequestParam(value = "choice",defaultValue = AppConstants.CHOICE ,required = false) String choice) {
+    	
+        UserDto createdUserDto = this.uService.addNewUser(userDto, choice);
         return new ResponseEntity<>(createdUserDto, HttpStatus.CREATED);
     }
 

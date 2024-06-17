@@ -23,6 +23,8 @@ import com.grofers.dtos.CategoryResponseDto;
 import com.grofers.dtos.ResponseDTO;
 import com.grofers.services.ICategoryService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/categories")
@@ -34,7 +36,6 @@ public class CategoryRestController {
 	private final Logger logger = LoggerFactory.getLogger(CategoryRestController.class);
 	
 	
-	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/admin")
 	public ResponseEntity<CategoryResponseDto> getAllCategories(
 			@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
@@ -60,15 +61,16 @@ public class CategoryRestController {
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
-	public ResponseEntity<CategoryDto> createNewCategory(@RequestBody CategoryDto catDto){
+	public ResponseEntity<CategoryDto> createNewCategory(@Valid @RequestBody CategoryDto catDto){
 		
 		CategoryDto categoryDto = this.catService.addNewCategory(catDto);
 		
 		return new ResponseEntity<>(categoryDto, HttpStatus.CREATED);
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{catId}")
-	public ResponseEntity<CategoryDto> updateCategory(@PathVariable Integer catId,@RequestBody CategoryDto catDto ){
+	public ResponseEntity<CategoryDto> updateCategory(@PathVariable Integer catId,@Valid @RequestBody CategoryDto catDto ){
 		
 		CategoryDto categoryDto = this.catService.updateCategory(catDto, catId);
 		
@@ -78,9 +80,9 @@ public class CategoryRestController {
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{catId}")
 	public ResponseEntity<ResponseDTO> deleteCategory(@PathVariable Integer catId){
+		String message = this.catService.deleteCategory(catId);
 		
-		
-		return ResponseEntity.ok(new ResponseDTO("Category with id: " + catId + " deleted successfully", true));
+		return ResponseEntity.ok(new ResponseDTO(message, true));
 	}
 	
 }
