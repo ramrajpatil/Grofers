@@ -20,4 +20,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 	List<Product> findByProductNameContaining(String prodName);
 	
 	boolean existsByProductName(String productName);
+	
+	List<Product> findTop2ByCategory(Category catList);
 }

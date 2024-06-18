@@ -70,18 +70,11 @@ public class OrderRestController {
 	}
 
 	@PostMapping("/{userId}")
-	public ResponseEntity<OrderDto> createOrder(@PathVariable Integer userId, @Valid @RequestBody OrderDto orderDto) {
+	public ResponseEntity<OrderDto> placeOrder(@PathVariable Integer userId) {
 
-		OrderDto order = this.orderService.addNewOrder(orderDto, userId);
+		OrderDto order = this.orderService.placeOrder(userId);
 
 		return ResponseEntity.ok(order);
-	}
-	
-	@PutMapping("/{orderId}/products")
-	public ResponseEntity<OrderDto> addProductsToOrder(@PathVariable Integer orderId, @Valid @RequestBody OrderDto orderDto){
-		
-		
-		return null;
 	}
 	
 	@PutMapping("/{orderId}")

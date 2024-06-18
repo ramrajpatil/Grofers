@@ -12,13 +12,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CartItemDto {
 
-	private Integer cartItemId;
-	
 	private Integer productId;
 	
     @Min(value = 0, message = "The quantity of CartItem must be greater than or equal to zero")
 	private int quantity;
-	
-	
 	
 }

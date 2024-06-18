@@ -22,4 +22,6 @@ public interface IProductService {
 	List<ProductDto> fetchProductsBySupplier(Integer supId);
 	
 	List<ProductDto> getByNameContaining(String prodName);
+	
+	List<ProductDto> recommendProducts(Integer userId);
 }

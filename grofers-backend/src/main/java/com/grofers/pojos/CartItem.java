@@ -1,5 +1,7 @@
 package com.grofers.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,6 +41,7 @@ public class CartItem {
 
     @OneToOne
     @JoinColumn(name = "product_id")
+    @JsonIgnoreProperties(value = {"category", "supplier","orderDetail"})
     private Product product;
 
     public double getTotalPrice() {

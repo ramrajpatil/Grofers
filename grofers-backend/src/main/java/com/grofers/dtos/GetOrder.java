@@ -1,8 +1,6 @@
-package com.app.dto;
+package com.grofers.dtos;
 
 import java.time.LocalDate;
-
-import com.app.pojos.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +16,5 @@ public class GetOrder {
 	private Long userId;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	private Status status;
 
 }

@@ -99,7 +99,7 @@ public class UserServiceImpl implements IUserService {
 			
 			if(newUser.getRole() == UserRole.ROLE_CUSTOMER) {
 				Cart cart = new Cart(newUser);
-				cartRepo.save(cart);
+				this.cartRepo.save(cart);
 			}
 			
 
@@ -126,7 +126,7 @@ public class UserServiceImpl implements IUserService {
 		User user = uRepo.findById(userId)
 				.orElseThrow(() -> new UserHandlingException("User with given id: "+userId+" does not exist."));
 		
-		uRepo.delete(user);
+		this.uRepo.delete(user);
 		
 		return "User with userdId: "+userId+" deleted successfully !!!";
 	}
@@ -142,7 +142,7 @@ public class UserServiceImpl implements IUserService {
 		
 		User registeredUser = this.uRepo.save(user);
 		Cart cart = new Cart(registeredUser);
-		cartRepo.save(cart);
+		this.cartRepo.save(cart);
 		
 		return this.mapper.map(registeredUser, UserDto.class);
 	}

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.grofers.dtos.ResponseDTO;
 import com.grofers.exceptions.DuplicateEntryException;
+import com.grofers.exceptions.EmptyCartException;
 import com.grofers.exceptions.NotFoundException;
 import com.grofers.exceptions.UserHandlingException;
 
@@ -39,6 +40,16 @@ public class GlobalExceptionHandler {
 		ResponseDTO response = new ResponseDTO(message, false);
 
 		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(EmptyCartException.class)
+	public ResponseEntity<ResponseDTO> handleEmptyCartException(EmptyCartException ex) {
+		
+		String message = ex.getMessage();
+		
+		ResponseDTO response = new ResponseDTO(message, false);
+		
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)

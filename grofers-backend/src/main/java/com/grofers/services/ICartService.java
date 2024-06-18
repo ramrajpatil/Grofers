@@ -10,12 +10,12 @@ public interface ICartService {
 
 	Cart fetchCart(Integer userId);
 	
-	String addToCart(CartItemDto cartItemDto, Integer cartId);
+	Cart addToCart(CartItemDto cartItemDto, Integer cartId);
 	
-	String removeFromCart(Integer cartItemId);
+	Cart removeFromCart(Integer cartItemId);
 	
 	String emptyCart(Integer cartId);
 	
-	String addAllToCart(List<CartItemDto> cartItemDtos, Integer cartId);
-	
+	Cart addAllToCart(List<CartItemDto> cartItemDtos, Integer cartId);
+
 }

@@ -47,11 +47,13 @@ public class CartServiceImpl implements ICartService {
 	}
 
 	@Override
-	public String addToCart(CartItemDto cartItemDto, Integer cartId) {
+	public Cart addToCart(CartItemDto cartItemDto, Integer userId) {
 		
-		Cart cart = this.cartRepo.findById(cartId)
-				.orElseThrow(() -> 
-				new NotFoundException("Cart with id: "+cartId+" does not exists."));
+		User user = this.userRepo.findById(userId)
+				.orElseThrow(() -> new UserHandlingException("User with given id: " + userId + " does not exist."));
+		
+		Cart cart = user.getCart();
+		
 		
 		Product product = this.prodRepo.findById(cartItemDto.getProductId())
 				.orElseThrow(() -> 
@@ -66,16 +68,19 @@ public class CartServiceImpl implements ICartService {
 		
 		cart.getCartItems().add(cartItem);
 		
+		cart.setTotalAmount(cart.getTotalAmount());
+		
 		// Saving new cart item to the database.
 		this.cartItemRepo.save(cartItem);
 		// Updating the cart with newly added CartItem
-		this.cartRepo.save(cart);
+		Cart updatedCart = this.cartRepo.save(cart);
 		
-		return "Product: "+product.getProductName()+" with qty: "+cartItemDto.getQuantity()+" added to cart successfully !!!";
+		return updatedCart;
 	}
+	
 
 	@Override
-	public String removeFromCart(Integer cartItemId) {
+	public Cart removeFromCart(Integer cartItemId) {
 		
 		CartItem cartItem = this.cartItemRepo.findById(cartItemId)
 		.orElseThrow(() -> 
@@ -85,21 +90,23 @@ public class CartServiceImpl implements ICartService {
 		List<CartItem> cartItems = cart.getCartItems();
 		cartItems.remove(cartItem);
 		cart.setCartItems(cartItems);
-		
+		cart.setTotalAmount(cart.getTotalAmount());
 		// updating the cart
-		this.cartRepo.save(cart);
+		Cart updatedCart = this.cartRepo.save(cart);
 		
 		// Removing CartItem from the database
 		this.cartItemRepo.delete(cartItem);
 		
-		return null;
+		return updatedCart;
 	}
 
 	@Override
-	public String emptyCart(Integer cartId) {
-		Cart cart = this.cartRepo.findById(cartId)
-				.orElseThrow(() -> 
-				new NotFoundException("Cart with id: "+cartId+" does not exists."));
+	public String emptyCart(Integer userId) {
+		
+		User user = this.userRepo.findById(userId)
+				.orElseThrow(() -> new UserHandlingException("User with given id: " + userId + " does not exist."));
+		
+		Cart cart = user.getCart();
 		
 		// Removing all items from the cart.
 		List<CartItem> list = cart.getCartItems();
@@ -115,12 +122,14 @@ public class CartServiceImpl implements ICartService {
 	}
 
 	@Override
-	public String addAllToCart(List<CartItemDto> cartItemDtos, Integer cartId) {
+	public Cart addAllToCart(List<CartItemDto> cartItemDtos, Integer userId) {
+		
+		User user = this.userRepo.findById(userId)
+				.orElseThrow(() -> new UserHandlingException("User with given id: " + userId + " does not exist."));
+		
+		Cart cart = user.getCart();
+		
 		for(CartItemDto dto : cartItemDtos) {
-			
-			Cart cart = this.cartRepo.findById(cartId)
-					.orElseThrow(() -> 
-					new NotFoundException("Cart with id: "+cartId+" does not exists."));
 			
 			Product product = this.prodRepo.findById(dto.getProductId())
 					.orElseThrow(() -> 
@@ -134,15 +143,17 @@ public class CartServiceImpl implements ICartService {
 			cartItem.setCart(cart);
 			
 			cart.getCartItems().add(cartItem);
-			
+			cart.setTotalAmount(cart.getTotalAmount());
 			// Saving new cart item to the database.
 			this.cartItemRepo.save(cartItem);
 			// Updating the cart with newly added cartitem
-			this.cartRepo.save(cart);
 			
 		}
+		Cart updatedCart = this.cartRepo.save(cart);
 		
-		return "Added all to cart successfully !!!";
+		return updatedCart;
 	}
+
+	
 
 }

@@ -1,14 +1,11 @@
 package com.grofers.services;
 
-import org.springframework.stereotype.Service;
+import java.time.LocalDate;
+import java.util.List;
 
 import com.grofers.dtos.OrderDto;
 import com.grofers.dtos.OrderResponseDto;
 
-import jakarta.transaction.Transactional;
-
-@Service
-@Transactional
 public interface IOrderService {
 
 	// Get orders by a user
@@ -16,9 +13,11 @@ public interface IOrderService {
 	
 	OrderResponseDto fetchAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
 	
+	List<OrderDto> findByDeliveryDateBetween(LocalDate strtDate, LocalDate endDate);
+	
 	OrderDto fetchSingleOrder(Integer orderId);
 	
-	OrderDto addNewOrder(OrderDto orderDto, Integer userId);
+	OrderDto placeOrder(Integer userId);
 	
 	OrderDto updateOrder(OrderDto orderDto, Integer orderId);
 	
