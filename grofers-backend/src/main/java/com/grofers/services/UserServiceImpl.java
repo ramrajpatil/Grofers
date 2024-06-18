@@ -16,8 +16,10 @@ import com.grofers.dtos.UserDto;
 import com.grofers.dtos.UserResponseDto;
 import com.grofers.exceptions.DuplicateEntryException;
 import com.grofers.exceptions.UserHandlingException;
+import com.grofers.pojos.Cart;
 import com.grofers.pojos.User;
 import com.grofers.pojos.UserRole;
+import com.grofers.repos.CartRepo;
 import com.grofers.repos.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -31,6 +33,9 @@ public class UserServiceImpl implements IUserService {
 	
 	@Autowired
 	private ModelMapper mapper;
+	
+	@Autowired
+	private CartRepo cartRepo;
 	
 	@Autowired
 	private PasswordEncoder encoder;
@@ -82,7 +87,7 @@ public class UserServiceImpl implements IUserService {
 
 			User user = this.mapper.map(userDto, User.class);
 			user.setPassword(this.encoder.encode(user.getPassword()));
-
+			
 			// Setting the new registering user as customer.
 
 			if (choice.equalsIgnoreCase("admin"))
@@ -91,6 +96,12 @@ public class UserServiceImpl implements IUserService {
 				user.setRole(UserRole.ROLE_CUSTOMER);
 
 			User newUser = this.uRepo.save(user);
+			
+			if(newUser.getRole() == UserRole.ROLE_CUSTOMER) {
+				Cart cart = new Cart(newUser);
+				cartRepo.save(cart);
+			}
+			
 
 			return this.mapper.map(newUser, UserDto.class);
 		}
@@ -130,7 +141,8 @@ public class UserServiceImpl implements IUserService {
 		user.setRole(UserRole.ROLE_CUSTOMER);
 		
 		User registeredUser = this.uRepo.save(user);
-		
+		Cart cart = new Cart(registeredUser);
+		cartRepo.save(cart);
 		
 		return this.mapper.map(registeredUser, UserDto.class);
 	}

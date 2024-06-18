@@ -1,0 +1,18 @@
+INSERT INTO categories (category_id, category_name) VALUES (14, 'ACs');
+INSERT INTO categories (category_id, category_name) VALUES (5, 'Books');
+INSERT INTO categories (category_id, category_name) VALUES (10, 'Casual Shoes');
+INSERT INTO categories (category_id, category_name) VALUES (19, 'Headphones');
+INSERT INTO categories (category_id, category_name) VALUES (11, 'Home Essentials');
+INSERT INTO categories (category_id, category_name) VALUES (18, 'Home Theatres');
+INSERT INTO categories (category_id, category_name) VALUES (1, 'Laptop Accessories');
+INSERT INTO categories (category_id, category_name) VALUES (4, 'Laptops');
+INSERT INTO categories (category_id, category_name) VALUES (6, 'Men''s Apparels');
+INSERT INTO categories (category_id, category_name) VALUES (2, 'Mobile Accessories');
+INSERT INTO categories (category_id, category_name) VALUES (12, 'Office Essentials');
+INSERT INTO categories (category_id, category_name) VALUES (17, 'School Essentials');
+INSERT INTO categories (category_id, category_name) VALUES (3, 'Smartphones');
+INSERT INTO categories (category_id, category_name) VALUES (8, 'Sports Apparels');
+INSERT INTO categories (category_id, category_name) VALUES (9, 'Sports Shoes');
+INSERT INTO categories (category_id, category_name) VALUES (20, 'Tablets');
+INSERT INTO categories (category_id, category_name) VALUES (13, 'TVs');
+INSERT INTO categories (category_id, category_name) VALUES (7, 'Womens''s Apparels');

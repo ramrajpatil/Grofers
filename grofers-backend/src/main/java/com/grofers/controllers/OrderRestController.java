@@ -31,7 +31,7 @@ public class OrderRestController {
 
 	@Autowired
 	private IOrderService orderService;
-
+	
 	private final Logger logger = LoggerFactory.getLogger(OrderRestController.class);
 
 	// Fetching all orders.
@@ -75,6 +75,13 @@ public class OrderRestController {
 		OrderDto order = this.orderService.addNewOrder(orderDto, userId);
 
 		return ResponseEntity.ok(order);
+	}
+	
+	@PutMapping("/{orderId}/products")
+	public ResponseEntity<OrderDto> addProductsToOrder(@PathVariable Integer orderId, @Valid @RequestBody OrderDto orderDto){
+		
+		
+		return null;
 	}
 	
 	@PutMapping("/{orderId}")
