@@ -54,7 +54,7 @@ public class Cart {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties(value = {"cart", "orders", "password","enabled","authorities","accountNonExpired","credentialsNonExpired","accountNonLocked" })
+    @JsonIgnoreProperties(value = {"role","cart", "orders", "password","enabled","authorities","accountNonExpired","credentialsNonExpired","accountNonLocked" })
     private User user;
     
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

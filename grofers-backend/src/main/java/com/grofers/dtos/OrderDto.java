@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.grofers.pojos.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.grofers.pojos.OrderDetail;
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,13 +22,15 @@ public class OrderDto {
 	
 	private LocalDate orderDate;
 
-	@NotEmpty(message = "Delivery date cannot be empty.")
 	private LocalDate deliveryDate;
 
 	private double totalAmount;
 
-	private User user;
+	@JsonIgnoreProperties(value = {"cart", "orders", "password","enabled","authorities","accountNonExpired","credentialsNonExpired","accountNonLocked" })
+	private UserDto user;
 
 	// We will be fetching order details along with order always.
-	private Set<OrderDetailDto> orderDetails = new HashSet<>();
+	private Set<OrderDetail> orderDetails = new HashSet<>();
+	
+	
 }

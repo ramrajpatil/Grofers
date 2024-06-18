@@ -1,6 +1,7 @@
 package com.grofers.services;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,7 +24,6 @@ import com.grofers.pojos.CartItem;
 import com.grofers.pojos.Order;
 import com.grofers.pojos.OrderDetail;
 import com.grofers.pojos.User;
-import com.grofers.repos.OrderDetailRepository;
 import com.grofers.repos.OrderRepository;
 import com.grofers.repos.UserRepository;
 
@@ -36,8 +36,8 @@ public class OrderServiceImpl implements IOrderService {
 	@Autowired
 	private OrderRepository orderRepo;
 	
-	@Autowired
-	private OrderDetailRepository oDRepo;
+//	@Autowired
+//	private OrderDetailRepository oDRepo;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -113,59 +113,53 @@ public class OrderServiceImpl implements IOrderService {
 
 	@Override
 	public OrderDto placeOrder(Integer userId) {
-		User user = this.userRepo.findById(userId)
-				.orElseThrow(() -> new UserHandlingException("User with given id: " + userId + " does not exist."));
+	    User user = this.userRepo.findById(userId)
+	            .orElseThrow(() -> new UserHandlingException("User with given id: " + userId + " does not exist."));
+	    
+	        Cart cart = user.getCart();
 
-		Order newOrder = new Order();
-		
-		
-		Cart cart = user.getCart();
-		
-		if(cart.getCartItems().size() <= 0) {
-			throw new EmptyCartException("Please add items in you cart first before placing an order.");
-		}
-		else {
-			List<CartItem> cartItems = cart.getCartItems();
-			Set<OrderDetail> orderDetails = newOrder.getOrderDetails();
-			cartItems.forEach((c) ->{
-				OrderDetail od = new OrderDetail();
-				od.setOrder(newOrder);
-				od.setProduct(c.getProduct());
-				od.setQuantity(c.getQuantity());
-				
-				oDRepo.save(od);
-			});
-			
-			newOrder.setOrderDetails(orderDetails);
-			newOrder.setOrderDate(LocalDate.now());
-			newOrder.setDeliveryDate(LocalDate.now().plusDays(5));// Delivery date is set to 2 days after the order.
-			newOrder.setTotalAmount(cart.getTotalAmount());
-			newOrder.setUser(user);
-			
-			Order savedOrder = this.orderRepo.save(newOrder);
-			
-			this.cartService.emptyCart(cart.getCartId());
-			
-			return this.mapper.map(savedOrder, OrderDto.class);
-		}
-		
+	        if (cart.getCartItems().isEmpty()) {
+	            throw new EmptyCartException("Please add items in your cart first before placing an order.");
+	        }
+
+	        Order newOrder = new Order();
+	        newOrder.setOrderDate(LocalDate.now());
+	        newOrder.setDeliveryDate(LocalDate.now().plusDays(3));
+	        newOrder.setUser(user);
+
+	        Set<OrderDetail> orderDetails = new HashSet<>();
+	        
+	        for (CartItem cartItem : cart.getCartItems()) {
+	            OrderDetail od = new OrderDetail();
+	            od.setOrder(newOrder);
+	            od.setProduct(cartItem.getProduct());
+	            od.setQuantity(cartItem.getQuantity());
+	            orderDetails.add(od);
+	        }
+
+	        newOrder.setOrderDetails(orderDetails);
+	        newOrder.setTotalAmount(cart.getTotalAmount());
+
+	        
+	        // Saving the order, which will cascade save the order details
+	        Order savedOrder = this.orderRepo.save(newOrder);
+
+	        // Empty the cart
+	        this.cartService.emptyCart(cart.getCartId());
+
+	        // Map to OrderDto and return
+	        return this.mapper.map(savedOrder, OrderDto.class);
+	       
 	}
 
+
 	@Override
-	public OrderDto updateOrder(OrderDto orderDto, Integer orderId) {
+	public OrderDto updateOrder(Integer orderId, Integer days) {
 		Order order = this.orderRepo.findById(orderId)
 				.orElseThrow(() -> new NotFoundException("Order with given id: " + orderId + " does not exist."));
 
 		// Updating delivery data and products from the order.
-		order.setDeliveryDate(orderDto.getDeliveryDate());
-		
-		if (orderDto.getOrderDetails() != null) {
-            Set<OrderDetail> orders = orderDto.getOrderDetails().stream()
-                    .map(o -> this.mapper.map(o, OrderDetail.class))
-                    .collect(Collectors.toSet());
-            order.setOrderDetails(orders);
-            order.setTotalAmount(order.getTotalAmount());
-        }
+		order.setDeliveryDate(LocalDate.now().plusDays(days));
 		
 		Order updatedOrder = this.orderRepo.save(order);
 		

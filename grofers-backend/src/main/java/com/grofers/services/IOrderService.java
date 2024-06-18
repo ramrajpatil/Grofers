@@ -19,7 +19,7 @@ public interface IOrderService {
 	
 	OrderDto placeOrder(Integer userId);
 	
-	OrderDto updateOrder(OrderDto orderDto, Integer orderId);
+	OrderDto updateOrder(Integer orderId, Integer days);
 	
 	String deleteOrder(Integer orderId);
 	

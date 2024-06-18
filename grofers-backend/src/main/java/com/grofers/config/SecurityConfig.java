@@ -40,7 +40,7 @@ public class SecurityConfig {
         "/v3/api-docs",
         "/v2/api-docs", 
         "/swagger-resources/**", 
-        "/swagger-ui*/**", 
+        "/swagger-ui/**", 
         "/webjars/**"
     };
     
@@ -58,6 +58,7 @@ public class SecurityConfig {
             .httpBasic(Customizer.withDefaults())
             .authorizeHttpRequests(auths -> auths
                 .requestMatchers(PUBLIC_URLS).permitAll()
+                .requestMatchers("/swagger-ui*/**","/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

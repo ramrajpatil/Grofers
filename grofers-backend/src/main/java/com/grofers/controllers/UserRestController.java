@@ -71,8 +71,6 @@ public class UserRestController {
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> updateUserDetails(@PathVariable Integer userId, @Valid @RequestBody UserDto userDto) {
         logger.info("In updateUserDetails() for userId: {}", userId);
-        logger.info("Name: {}", userDto.getName());
-        logger.info("Email: {}", userDto.getEmail());
         // Omitting logging password for security reasons
         UserDto updatedUserDto = this.uService.updateUser(userDto, userId);
         return new ResponseEntity<>(updatedUserDto, HttpStatus.OK);

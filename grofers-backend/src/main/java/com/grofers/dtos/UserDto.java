@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.grofers.pojos.Order;
 import com.grofers.pojos.UserRole;
 
 import jakarta.validation.constraints.Email;
@@ -35,8 +34,8 @@ public class UserDto {
 	private String password;
 
 	private UserRole role;
-
-	private Set<Order> orders = new HashSet<>();// to avoid duplication of order.
+	
+	private Set<OrderDto> orders = new HashSet<>();// to avoid duplication of order.
 
 	@JsonProperty // Instruction to de-serialize password.
 	public void setPassword(String password) {

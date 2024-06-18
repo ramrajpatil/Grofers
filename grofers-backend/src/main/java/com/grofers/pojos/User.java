@@ -39,6 +39,9 @@ public class User implements UserDetails {
 
 	// unique userId, name, email, password, and role.
 
+
+	private static final long serialVersionUID = -7619594971719647345L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer userId;
@@ -59,7 +62,7 @@ public class User implements UserDetails {
 	private Set<Order> orders = new HashSet<>();// to avoid duplication of order.
 
 	@JsonIgnoreProperties(value = { "user", "cartItems" })
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Cart cart;
 	
 	public User(String name, String email, String password, UserRole role) {

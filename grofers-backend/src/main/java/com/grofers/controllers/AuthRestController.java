@@ -47,21 +47,14 @@ public class AuthRestController {
 	public ResponseEntity<JWTAuthResponse> createToken(@Valid @RequestBody JWTAuthRequest request) {
 		logger.info("In create token / login");
 
-		logger.info("Username: " + request.getUsername());
-		logger.info("Password: " + request.getPassword());
-
 		this.autheticate(request.getUsername(), request.getPassword());
 
 		UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
 
 		String token = this.helper.generateToken(userDetails.getUsername());
 
-		logger.info("Before JWTAuthResponse: "+token);
-		
-
 		JWTAuthResponse response = new JWTAuthResponse();
 		response.setToken(token);
-	
 		
 		logger.info("In JWTAuthResponse: "+response.getToken());
 
@@ -69,15 +62,13 @@ public class AuthRestController {
 	}
 
 	private void autheticate(String username, String password) {
-		logger.info("Username from authenticate() : " + username + " and password : " + password);
+		logger.info("Username from authenticate() : " + username );
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
 				password);
 		
 		try {
 			this.authenticationManager.authenticate(authenticationToken);
-			logger.info("After authentication: "+authenticationToken.getPrincipal().toString());
-			logger.info("After authentication: "+authenticationToken.getCredentials().toString());
 		} catch (BadCredentialsException e) {
 			System.out.println(
 					"In error of authenticate() of " + getClass().getName() + " error message : " + e.getMessage());

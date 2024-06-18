@@ -6,7 +6,6 @@ import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,7 +20,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-@EqualsAndHashCode
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,7 +28,7 @@ import lombok.Setter;
 @Table(name = "orders")
 public class Order {
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderId;
 
@@ -44,16 +42,13 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderDetail> orderDetails = new HashSet<>();
 
     public double getTotalAmount() {
-    	
-    	this.totalAmount = orderDetails.stream()
-        .mapToDouble(OrderDetail::getTotalPrice)
-        .sum();
-    	
-        return this.totalAmount;
-    }
+    	return orderDetails.stream()
+    	.mapToDouble(OrderDetail::getTotalPrice)
+    	.sum();
+    	}
 
 }

@@ -112,5 +112,14 @@ public class ProductRestController {
 		return ResponseEntity.ok(prodList);
 	}
 	
+	@PreAuthorize("hasRole('CUSTOMER')")
+	@GetMapping("/recommend/{userId}")
+	public ResponseEntity<List<ProductDto>> recommendProducts(@PathVariable Integer userId){
+		
+		List<ProductDto> dtos = this.prodService.recommendProducts(userId);
+		
+		return ResponseEntity.ok(dtos);
+	}
+	
 	
 }

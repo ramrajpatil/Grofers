@@ -35,8 +35,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 		// 1: Get token
 		String requestToken = request.getHeader("Authorization");
 		// Bearer ufucuwy8237yr
-		
-		System.out.println(requestToken);// to check the token
+
+//		System.out.println(requestToken);// to check the token
 		String username = null;
 
 		String token = null;
@@ -46,9 +46,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 			try {
 
 				username = this.jwtTokenHelper.getUsernameFromToken(token);
-				
-				System.out.println("In JWTAuthenticationFilter line no 50... "+username);
-				
+
+//				System.out.println("In JWTAuthenticationFilter line no 50... "+username);
+
 			} catch (IllegalArgumentException e) {
 				System.out.println("Unable to get Jwt token " + e.getMessage());
 
@@ -57,26 +57,22 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 			} catch (MalformedJwtException e) {
 				System.out.println("Invalid Jwt " + e.getMessage());
 			}
-
-		} else {
-			System.out.println("Jwt token does not begin with Bearer");
+		} 
+		else {
+//			System.out.println("Jwt token does not begin with Bearer");
 		}
-
 		// Once we get the token, validate it.
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
 			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-			
 			if (this.jwtTokenHelper.validateToken(token, userDetails)) {
 
 				// All going well, and authenticate it.
 
-				UsernamePasswordAuthenticationToken authToken = 
-						new UsernamePasswordAuthenticationToken(userDetails,
+				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
 						null, userDetails.getAuthorities());
 
-				
 				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(authToken);
 

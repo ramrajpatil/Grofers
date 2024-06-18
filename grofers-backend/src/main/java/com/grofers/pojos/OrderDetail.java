@@ -1,5 +1,8 @@
 package com.grofers.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,22 +24,23 @@ import lombok.Setter;
 @Entity
 @Table(name = "order_details")
 public class OrderDetail {
-
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private Order order;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonIgnoreProperties(value = {"category", "supplier","orderDetail"})
     private Product product;
 
     private int quantity;
 
     public double getTotalPrice() {
-        return product.getPrice() * quantity;
+        return this.product.getPrice() * quantity;
     }
 }

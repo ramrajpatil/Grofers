@@ -104,19 +104,19 @@ public class GlobalExceptionHandler {
         ResponseDTO response = new ResponseDTO(message, false);
         
 
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 	
 	// To catch all other exceptions
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ResponseDTO> handleException(Exception ex) {
-
-		String message = ex.getMessage();
-
-		ResponseDTO response = new ResponseDTO(message, false);
-
-		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+//	@ExceptionHandler(Exception.class)
+//	public ResponseEntity<ResponseDTO> handleException(Exception ex) {
+//
+//		String message = ex.getMessage();
+//
+//		ResponseDTO response = new ResponseDTO(message, false);
+//
+//		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//	}
 	
 	
 }

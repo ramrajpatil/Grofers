@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +20,6 @@ import com.grofers.dtos.OrderDto;
 import com.grofers.dtos.OrderResponseDto;
 import com.grofers.dtos.ResponseDTO;
 import com.grofers.services.IOrderService;
-
-import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin
@@ -61,9 +58,10 @@ public class OrderRestController {
 		return ResponseEntity.ok(dto);
 	}
 
+	
 	@GetMapping("/{orderId}")
 	public ResponseEntity<OrderDto> getSingleOrder(@PathVariable Integer orderId) {
-
+		System.out.println("In get single order of: "+getClass().getName());
 		OrderDto orderDto = this.orderService.fetchSingleOrder(orderId);
 
 		return ResponseEntity.ok(orderDto);
@@ -78,9 +76,10 @@ public class OrderRestController {
 	}
 	
 	@PutMapping("/{orderId}")
-	public ResponseEntity<OrderDto> updateOrder(@PathVariable Integer orderId, @Valid @RequestBody OrderDto orderDto) {
+	public ResponseEntity<OrderDto> updateOrder(@PathVariable Integer orderId,
+			@RequestParam(value = "days", defaultValue = AppConstants.DAYS, required = false) Integer days) {
 
-		OrderDto order = this.orderService.updateOrder(orderDto, orderId);
+		OrderDto order = this.orderService.updateOrder(orderId, days);
 
 		return ResponseEntity.ok(order);
 	}

@@ -183,41 +183,52 @@ public class ProductServiceImpl implements IProductService {
 	public List<ProductDto> recommendProducts(Integer userId) {
 		User user = this.userRepo.findById(userId)
 				.orElseThrow(() -> new UserHandlingException("User with given id: " + userId + " does not exist."));
+		
 		Set<Order> orders = user.getOrders();
 
-		Set<Category> catList= new HashSet<>();
+		Set<Category> catList = new HashSet<>();
 		List<Product> result = new ArrayList<>();
-		
+
 		// If there are previous orders by user.
-		if (orders != null) {
+		if (!orders.isEmpty() ) {
 
 			orders.forEach(o -> {
 				Set<OrderDetail> details = o.getOrderDetails();
 
 				details.forEach((d) -> {
-				 	Category category = d.getProduct().getCategory();
-				 	catList.add(category);	// Got all the categories from which the user has previously ordered products
+					Category category = d.getProduct().getCategory();
+					catList.add(category); // Got all the categories from which the user has previously ordered products
 				});
 
 			});
-			
+
 			List<Category> list = catList.stream().collect(Collectors.toList());
-			
-			list.forEach((c) ->{
+
+			list.forEach((c) -> {
 				List<Product> prodList = this.prodRepo.findByCategory(c);
 				result.addAll(prodList);
 			});
-			
-			List<ProductDto> dtos = result.stream().map(p -> this.mapper.map(p, ProductDto.class)).collect(Collectors.toList());
-			
-			return null;
-		}
-		
-		// If there are no orders for the user. 
-		// Recommend 5
 
-		return null;
-		
+			List<ProductDto> dtos = result.stream().map(p -> this.mapper.map(p, ProductDto.class))
+					.collect(Collectors.toList());
+
+			return dtos;
+		}
+		result.clear();
+		// If there are no orders for the user.
+		// Recommend top 2 from each category.
+
+		List<Category> categories = this.catRepo.findAll();
+		categories.forEach((c) -> {
+			List<Product> prodList = this.prodRepo.findByCategory(c);
+			result.addAll(prodList);
+		});
+
+		List<ProductDto> dtos = result.stream().map(p -> this.mapper.map(p, ProductDto.class))
+				.collect(Collectors.toList());
+
+		return dtos;
+
 	}
 
 }
