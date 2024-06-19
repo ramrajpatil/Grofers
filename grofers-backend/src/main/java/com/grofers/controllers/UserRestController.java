@@ -49,7 +49,7 @@ public class UserRestController {
     private IOrderService orderService;
     
 	// Register new user API
-	@PostMapping
+	@PostMapping("/register")
 	public ResponseEntity<UserDto> registerUser(@Valid @RequestBody UserDto userDto) {
 
 		UserDto registeredUserDto = this.uService.registerUser(userDto);
