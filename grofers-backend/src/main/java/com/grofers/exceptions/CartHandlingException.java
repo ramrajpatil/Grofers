@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EmptyCartException extends RuntimeException {
+public class CartHandlingException extends RuntimeException {
 
-	public EmptyCartException(String message) {
+	public CartHandlingException(String message) {
 		super(message);
 		
 	}

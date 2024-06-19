@@ -27,6 +27,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private JWTTokenHelper jwtTokenHelper;
+	
+	private static String tokenChecker;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -43,6 +45,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 		if (requestToken != null && requestToken.startsWith("Bearer")) {
 			// Main token
 			token = requestToken.substring(7);
+			JWTAuthenticationFilter.tokenChecker = token;
 			try {
 
 				username = this.jwtTokenHelper.getUsernameFromToken(token);
@@ -86,6 +89,10 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
 		filterChain.doFilter(request, response);
 
+	}
+	
+	public static String getTokenChecker() {
+		return tokenChecker;
 	}
 
 }

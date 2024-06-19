@@ -58,7 +58,7 @@ public class OrderRestController {
 		return ResponseEntity.ok(dto);
 	}
 
-	
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@GetMapping("/{orderId}")
 	public ResponseEntity<OrderDto> getSingleOrder(@PathVariable Integer orderId) {
 		System.out.println("In get single order of: "+getClass().getName());
@@ -67,6 +67,7 @@ public class OrderRestController {
 		return ResponseEntity.ok(orderDto);
 	}
 
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/{userId}")
 	public ResponseEntity<OrderDto> placeOrder(@PathVariable Integer userId) {
 
@@ -75,6 +76,7 @@ public class OrderRestController {
 		return ResponseEntity.ok(order);
 	}
 	
+	@PreAuthorize("hasRole('CUSTOMER')")
 	@PutMapping("/{orderId}")
 	public ResponseEntity<OrderDto> updateOrder(@PathVariable Integer orderId,
 			@RequestParam(value = "days", defaultValue = AppConstants.DAYS, required = false) Integer days) {
@@ -84,6 +86,7 @@ public class OrderRestController {
 		return ResponseEntity.ok(order);
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{orderId}")
 	public ResponseEntity<ResponseDTO> deleteOrder(@PathVariable Integer orderId){
 		
