@@ -89,7 +89,7 @@ public class OrderServiceImpl implements IOrderService {
 
 			return resp;
 		} else
-			throw new UserHandlingException("The userId you have provided is invalid. Please provide your own userId.");
+			throw new UserHandlingException("Invalid userId. Please provide your own userId to get all your orders.");
 	}
 
 	// Only for the admin
@@ -134,7 +134,7 @@ public class OrderServiceImpl implements IOrderService {
 			return this.mapper.map(order, OrderDto.class);
 
 		} else
-			throw new UserHandlingException("The orderId you have provided is invalid. Please provide orderId from your own orders.");
+			throw new UserHandlingException("Invalid orderId. Please provide orderId from your own orders.");
 
 	}
 
@@ -183,7 +183,7 @@ public class OrderServiceImpl implements IOrderService {
 			// Map to OrderDto and return
 			return this.mapper.map(savedOrder, OrderDto.class);
 		} else
-			throw new UserHandlingException("The userId you have provided is invalid. Please provide your own userId.");
+			throw new UserHandlingException("Invalid userId. Please provide your own userId before placing an order.");
 
 	}
 
@@ -206,7 +206,7 @@ public class OrderServiceImpl implements IOrderService {
 
 			return this.mapper.map(updatedOrder, OrderDto.class);
 		} else
-			throw new UserHandlingException("The orderId you have provided is invalid. Please provide orderId from your own orders.");
+			throw new UserHandlingException("Invalid orderId. Please provide orderId from your own orders to update the order.");
 	}
 
 	@Override
@@ -226,7 +226,7 @@ public class OrderServiceImpl implements IOrderService {
 
 			return "Order with orderId: " + orderId + " was deleted successfully !!!";
 		} else
-			throw new UserHandlingException("The orderId you have provided is invalid. Please provide orderId from your own orders.");
+			throw new UserHandlingException("Invalid orderId. Please provide orderId from your own orders to delete.");
 	}
 
 	@Override

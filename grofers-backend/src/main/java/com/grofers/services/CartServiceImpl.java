@@ -176,16 +176,21 @@ public class CartServiceImpl implements ICartService {
 
 			for (CartItemDto dto : cartItemDtos) {
 
-				Product product = this.prodRepo.findById(dto.getProductId()).orElseThrow(
+				Product newProduct = this.prodRepo.findById(dto.getProductId()).orElseThrow(
 						() -> new NotFoundException("Product with id: " + dto.getProductId() + " does not exist."));
 
 				// Create new CartItem object
 				CartItem cartItem = new CartItem();
 
 				cartItem.setQuantity(dto.getQuantity());
-				cartItem.setProduct(product);
+				cartItem.setProduct(newProduct);
 				cartItem.setCart(cart);
-
+				
+				for (CartItem c : cart.getCartItems()) {
+					if(c.getProduct().equals(newProduct))
+						throw new CartHandlingException("The product with id: "+newProduct.getProductId()+" is added two times in your cart. Remove duplicate product.");
+				}
+				
 				cart.getCartItems().add(cartItem);
 				cart.setTotalAmount(cart.getTotalAmount());
 				// Saving new cart item to the database.

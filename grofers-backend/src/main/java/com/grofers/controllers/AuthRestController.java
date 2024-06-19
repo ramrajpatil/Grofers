@@ -69,7 +69,7 @@ public class AuthRestController {
 		
 		try {
 			this.authenticationManager.authenticate(authenticationToken);
-		} catch (BadCredentialsException e) {
+		} catch (Exception e) {
 			System.out.println(
 					"In error of authenticate() of " + getClass().getName() + " error message : " + e.getMessage());
 			throw new BadCredentialsException("Invalid username or password");

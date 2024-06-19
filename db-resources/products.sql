@@ -1,9 +1,10 @@
 INSERT INTO products (product_id, price, product_name, category_id, supplier_id) VALUES (1, 10, 'Octane Gel', 17, 8);
 INSERT INTO products (product_id, price, product_name, category_id, supplier_id) VALUES (2, 100, 'Classmate Longbook', 17, 8);
+INSERT INTO products (product_id, price, product_name, category_id, supplier_id) VALUES (3, 270, 'Samsung Galaxy Buds Pro', 21, 5);
 INSERT INTO products (product_id, price, product_name, category_id, supplier_id) VALUES (4, 500, 'Apple 15', 3, 12);
 INSERT INTO products (product_id, price, product_name, category_id, supplier_id) VALUES (5, 550, 'Apple 15 Pro', 3, 12);
 INSERT INTO products (product_id, price, product_name, category_id, supplier_id) VALUES (6, 600, 'Apple 15 Pro Max', 3, 12);
-INSERT INTO products (product_id, price, product_name, category_id, supplier_id) VALUES (7, 300, 'Apple Airpods Max', 19, 12);
+INSERT INTO products (product_id, price, product_name, category_id, supplier_id) VALUES (7, 300, 'Apple Airpods Max', 21, 12);
 INSERT INTO products (product_id, price, product_name, category_id, supplier_id) VALUES (8, 150, 'Apple Airpods 2', 19, 12);
 INSERT INTO products (product_id, price, product_name, category_id, supplier_id) VALUES (9, 200, 'Apple Airpods 3', 19, 12);
 INSERT INTO products (product_id, price, product_name, category_id, supplier_id) VALUES (10, 250, 'Apple iPad mini', 20, 12);

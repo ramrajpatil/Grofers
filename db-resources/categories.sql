@@ -5,6 +5,7 @@ INSERT INTO categories (category_id, category_name) VALUES (19, 'Headphones');
 INSERT INTO categories (category_id, category_name) VALUES (11, 'Home Essentials');
 INSERT INTO categories (category_id, category_name) VALUES (18, 'Home Theatres');
 INSERT INTO categories (category_id, category_name) VALUES (1, 'Laptop Accessories');
+INSERT INTO categories (category_id, category_name) VALUES (21, 'TWS Earphones');
 INSERT INTO categories (category_id, category_name) VALUES (4, 'Laptops');
 INSERT INTO categories (category_id, category_name) VALUES (6, 'Men''s Apparels');
 INSERT INTO categories (category_id, category_name) VALUES (2, 'Mobile Accessories');
