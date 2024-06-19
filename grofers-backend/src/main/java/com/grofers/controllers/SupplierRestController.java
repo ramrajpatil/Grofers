@@ -28,7 +28,7 @@ public class SupplierRestController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
-    public ResponseEntity<SupplierResponseDto> getAllSuppliers(
+    public ResponseEntity<SupplierResponseDto> fetchAllSuppliers(
             @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.SUPPLIER_SORT_BY, required = false) String sortBy,
@@ -41,6 +41,7 @@ public class SupplierRestController {
         return ResponseEntity.ok(dto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{supId}")
     public ResponseEntity<SupplierDto> getSingleSupplier(@PathVariable Integer supId) {
         logger.info("Fetching supplier with ID: {}", supId);
@@ -52,7 +53,7 @@ public class SupplierRestController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<SupplierDto> createNewSupplier(@Valid @RequestBody SupplierDto supDto) {
+    public ResponseEntity<SupplierDto> addNewSupplier(@Valid @RequestBody SupplierDto supDto) {
         logger.info("Creating a new supplier");
 
         SupplierDto newSupplier = supService.addNewSupplier(supDto);

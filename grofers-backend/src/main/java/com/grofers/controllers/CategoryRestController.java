@@ -35,7 +35,7 @@ public class CategoryRestController {
 	
 	private final Logger logger = LoggerFactory.getLogger(CategoryRestController.class);
 	
-	
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/admin")
 	public ResponseEntity<CategoryResponseDto> getAllCategories(
 			@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,

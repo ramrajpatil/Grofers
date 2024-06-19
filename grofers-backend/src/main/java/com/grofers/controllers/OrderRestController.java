@@ -46,27 +46,6 @@ public class OrderRestController {
 		return ResponseEntity.ok(dto);
 	}
 
-	@GetMapping("/user/{userId}")
-	public ResponseEntity<OrderResponseDto> getAllOrdersByUser(
-			@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-			@RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-			@RequestParam(value = "sortBy", defaultValue = AppConstants.ORDER_SORT_BY, required = false) String sortBy,
-			@RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir,
-			@PathVariable Integer userId) {
-		OrderResponseDto dto = this.orderService.fetchAllOrdersByUser(userId, pageNumber, pageSize, sortBy, sortDir);
-
-		return ResponseEntity.ok(dto);
-	}
-
-	@PreAuthorize("hasRole('CUSTOMER')")
-	@GetMapping("/{orderId}")
-	public ResponseEntity<OrderDto> getSingleOrder(@PathVariable Integer orderId) {
-		System.out.println("In get single order of: "+getClass().getName());
-		OrderDto orderDto = this.orderService.fetchSingleOrder(orderId);
-
-		return ResponseEntity.ok(orderDto);
-	}
-
 	@PreAuthorize("hasRole('CUSTOMER')")
 	@PostMapping("/{userId}")
 	public ResponseEntity<OrderDto> placeOrder(@PathVariable Integer userId) {
@@ -87,7 +66,7 @@ public class OrderRestController {
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
-	@DeleteMapping("/{orderId}")
+	@DeleteMapping("/{orderId}/admin")
 	public ResponseEntity<ResponseDTO> deleteOrder(@PathVariable Integer orderId){
 		
 		String message = this.orderService.deleteOrder(orderId);

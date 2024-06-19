@@ -18,14 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.grofers.dtos.JWTAuthRequest;
 import com.grofers.dtos.JWTAuthResponse;
-import com.grofers.dtos.UserDto;
 import com.grofers.securitys.JWTTokenHelper;
 import com.grofers.services.IUserService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/auth")
 @CrossOrigin("*")
 public class AuthRestController {
 
@@ -43,7 +42,7 @@ public class AuthRestController {
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@PostMapping("/auth/login")
+	@PostMapping("/login")
 	public ResponseEntity<JWTAuthResponse> createToken(@Valid @RequestBody JWTAuthRequest request) {
 		logger.info("In create token / login");
 
@@ -76,13 +75,5 @@ public class AuthRestController {
 		}
 	}
 
-	// Register new user API
-	@PostMapping("/users")
-	public ResponseEntity<UserDto> registerUser(@Valid @RequestBody UserDto userDto) {
-
-		UserDto registeredUserDto = this.uService.registerUser(userDto);
-
-		return new ResponseEntity<>(registeredUserDto, HttpStatus.CREATED);
-	}
 
 }

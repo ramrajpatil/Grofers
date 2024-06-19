@@ -29,6 +29,8 @@ import com.grofers.repos.CategoryRepository;
 import com.grofers.repos.ProductRepository;
 import com.grofers.repos.SupplierRepository;
 import com.grofers.repos.UserRepository;
+import com.grofers.securitys.JWTAuthenticationFilter;
+import com.grofers.securitys.JWTTokenHelper;
 
 import jakarta.transaction.Transactional;
 
@@ -50,6 +52,9 @@ public class ProductServiceImpl implements IProductService {
 
 	@Autowired
 	private ModelMapper mapper;
+
+	@Autowired
+	private JWTTokenHelper jwtTokenHelper;
 
 	@Override
 	public ProductResponseDto fetchAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
@@ -183,28 +188,51 @@ public class ProductServiceImpl implements IProductService {
 	public List<ProductDto> recommendProducts(Integer userId) {
 		User user = this.userRepo.findById(userId)
 				.orElseThrow(() -> new UserHandlingException("User with given id: " + userId + " does not exist."));
-		
-		Set<Order> orders = user.getOrders();
 
-		Set<Category> catList = new HashSet<>();
-		List<Product> result = new ArrayList<>();
+		// Securing against user trying to access orders by some other user.
+		String loggedInUserToken = JWTAuthenticationFilter.getTokenChecker();
 
-		// If there are previous orders by user.
-		if (!orders.isEmpty() ) {
+		String usernameFromToken = this.jwtTokenHelper.getUsernameFromToken(loggedInUserToken);
 
-			orders.forEach(o -> {
-				Set<OrderDetail> details = o.getOrderDetails();
+		if (user.getEmail().equals(usernameFromToken)) {
 
-				details.forEach((d) -> {
-					Category category = d.getProduct().getCategory();
-					catList.add(category); // Got all the categories from which the user has previously ordered products
+			Set<Order> orders = user.getOrders();
+
+			Set<Category> catList = new HashSet<>();
+			List<Product> result = new ArrayList<>();
+
+			// If there are previous orders by user.
+			if (!orders.isEmpty()) {
+
+				orders.forEach(o -> {
+					Set<OrderDetail> details = o.getOrderDetails();
+
+					details.forEach((d) -> {
+						Category category = d.getProduct().getCategory();
+						catList.add(category); // Got all the categories from which the user has previously ordered
+												// products
+					});
+
 				});
 
-			});
+				List<Category> list = catList.stream().collect(Collectors.toList());
 
-			List<Category> list = catList.stream().collect(Collectors.toList());
+				list.forEach((c) -> {
+					List<Product> prodList = this.prodRepo.findByCategory(c);
+					result.addAll(prodList);
+				});
 
-			list.forEach((c) -> {
+				List<ProductDto> dtos = result.stream().map(p -> this.mapper.map(p, ProductDto.class))
+						.collect(Collectors.toList());
+
+				return dtos;
+			}
+			result.clear();
+			// If there are no orders for the user.
+			// Recommend top 2 from each category.
+
+			List<Category> categories = this.catRepo.findAll();
+			categories.forEach((c) -> {
 				List<Product> prodList = this.prodRepo.findByCategory(c);
 				result.addAll(prodList);
 			});
@@ -213,21 +241,8 @@ public class ProductServiceImpl implements IProductService {
 					.collect(Collectors.toList());
 
 			return dtos;
-		}
-		result.clear();
-		// If there are no orders for the user.
-		// Recommend top 2 from each category.
-
-		List<Category> categories = this.catRepo.findAll();
-		categories.forEach((c) -> {
-			List<Product> prodList = this.prodRepo.findByCategory(c);
-			result.addAll(prodList);
-		});
-
-		List<ProductDto> dtos = result.stream().map(p -> this.mapper.map(p, ProductDto.class))
-				.collect(Collectors.toList());
-
-		return dtos;
+		} else
+			throw new UserHandlingException("Invalid userId. Please provide your own userId to get recommendations.");
 
 	}
 

@@ -36,8 +36,9 @@ public class ProductRestController {
 	
 	private final Logger logger = LoggerFactory.getLogger(ProductRestController.class);
 	
-	@GetMapping("/")
-	public ResponseEntity<ProductResponseDto> getAllProducts(
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/admin")
+	public ResponseEntity<ProductResponseDto> fetchAllProducts(
 			@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
 			@RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
 			@RequestParam(value = "sortBy", defaultValue = AppConstants.PRODUCT_SORT_BY, required = false) String sortBy,
@@ -58,8 +59,8 @@ public class ProductRestController {
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
-	@PostMapping("/category/{catId}/supplier/{supId}")
-	public ResponseEntity<ProductDto> createProduct(
+	@PostMapping("/supplier/{supId}/category/{catId}")
+	public ResponseEntity<ProductDto> addNewProduct(
 			@PathVariable Integer catId, @PathVariable Integer supId,
 			@Valid @RequestBody ProductDto productDto){
 		
@@ -110,15 +111,6 @@ public class ProductRestController {
 		List<ProductDto> prodList = this.prodService.getByNameContaining(keyword);
 		
 		return ResponseEntity.ok(prodList);
-	}
-	
-	@PreAuthorize("hasRole('CUSTOMER')")
-	@GetMapping("/recommend/{userId}")
-	public ResponseEntity<List<ProductDto>> recommendProducts(@PathVariable Integer userId){
-		
-		List<ProductDto> dtos = this.prodService.recommendProducts(userId);
-		
-		return ResponseEntity.ok(dtos);
 	}
 	
 	
