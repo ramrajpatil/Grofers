@@ -60,7 +60,7 @@ public class CartServiceImpl implements ICartService {
 
 		} else
 			throw new UserHandlingException(
-					"The userId you have provided is invalid. Please provide your own userId to access your cart.");
+					"Invalid userId. Please provide your own userId to access your cart.");
 
 	}
 
@@ -105,7 +105,7 @@ public class CartServiceImpl implements ICartService {
 
 		} else
 			throw new UserHandlingException(
-					"The userId you have provided is invalid. Please provide your own userId to add items to your cart.");
+					"Invalid userId. Please provide your own userId to add items to your cart.");
 	}
 
 	@Override
@@ -156,7 +156,7 @@ public class CartServiceImpl implements ICartService {
 			return "Cart emptied successfully !!!";
 		} else
 			throw new UserHandlingException(
-					"The userId you have provided is invalid. Please provide your own userId to empty your cart.");
+					"Invalid userId. Please provide your own userId to empty your cart.");
 	}
 
 	@Override
@@ -188,7 +188,7 @@ public class CartServiceImpl implements ICartService {
 				
 				for (CartItem c : cart.getCartItems()) {
 					if(c.getProduct().equals(newProduct))
-						throw new CartHandlingException("The product with id: "+newProduct.getProductId()+" is added two times in your cart. Remove duplicate product.");
+						throw new CartHandlingException("The product with id: "+newProduct.getProductId()+" is added more than one time in your cart. Remove duplicate product(s).");
 				}
 				
 				cart.getCartItems().add(cartItem);
@@ -203,7 +203,7 @@ public class CartServiceImpl implements ICartService {
 			return updatedCart;
 		} else
 			throw new UserHandlingException(
-					"The userId you have provided is invalid. Please provide your own userId to add items your cart.");
+					"Invalid userId. Please provide your own userId to add items your cart.");
 	}
 
 }
