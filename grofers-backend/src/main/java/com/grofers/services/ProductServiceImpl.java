@@ -227,13 +227,13 @@ public class ProductServiceImpl implements IProductService {
 
 				return dtos;
 			}
-			result.clear();
+			
 			// If there are no orders for the user.
 			// Recommend top 2 from each category.
 
 			List<Category> categories = this.catRepo.findAll();
 			categories.forEach((c) -> {
-				List<Product> prodList = this.prodRepo.findByCategory(c);
+				List<Product> prodList = this.prodRepo.findTop2ByCategory(c);
 				result.addAll(prodList);
 			});
 
