@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.grofers.dtos.JWTAuthRequest;
 import com.grofers.dtos.JWTAuthResponse;
 import com.grofers.securitys.JWTTokenHelper;
-import com.grofers.services.IUserService;
 
 import jakarta.validation.Valid;
 
@@ -36,9 +35,6 @@ public class AuthRestController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-
-	@Autowired
-	private IUserService uService;
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
