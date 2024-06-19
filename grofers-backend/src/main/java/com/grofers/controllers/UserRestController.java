@@ -72,7 +72,7 @@ public class UserRestController {
     }
 
     // GET - get single user
-    
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getSingleUser(@PathVariable Integer userId) {
         UserDto userDto = this.uService.fetchSingleUser(userId);
