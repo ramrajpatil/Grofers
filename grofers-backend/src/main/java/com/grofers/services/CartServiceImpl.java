@@ -86,7 +86,7 @@ public class CartServiceImpl implements ICartService {
 				if (c.getProduct().equals(newProduct)) {
 					c.setQuantity(c.getQuantity() + cartItemDto.getQuantity());
 
-					// Updating the cart with newly added CartItem
+					// Updating the cart with newly updated quantity CartItem
 					Cart updatedCart = this.cartRepo.save(cart);
 
 					return updatedCart;
