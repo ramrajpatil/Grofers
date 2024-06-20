@@ -59,8 +59,7 @@ public class CartServiceImpl implements ICartService {
 			return cart;
 
 		} else
-			throw new UserHandlingException(
-					"Invalid userId. Please provide your own userId to access your cart.");
+			throw new UserHandlingException("Invalid userId. Please provide your own userId to access your cart.");
 
 	}
 
@@ -79,21 +78,30 @@ public class CartServiceImpl implements ICartService {
 
 			Cart cart = user.getCart();
 
-			Product product = this.prodRepo.findById(cartItemDto.getProductId()).orElseThrow(
+			Product newProduct = this.prodRepo.findById(cartItemDto.getProductId()).orElseThrow(
 					() -> new NotFoundException("Product with id: " + cartItemDto.getProductId() + " does not exist."));
+
+			// If the product already exists in the cart then only updating the quantity.
+			for (CartItem c : cart.getCartItems()) {
+				if (c.getProduct().equals(newProduct)) {
+					c.setQuantity(c.getQuantity() + cartItemDto.getQuantity());
+
+					// Updating the cart with newly added CartItem
+					Cart updatedCart = this.cartRepo.save(cart);
+
+					return updatedCart;
+				}
+			}
 
 			// Create new CartItem object
 			CartItem cartItem = new CartItem();
 
 			cartItem.setQuantity(cartItemDto.getQuantity());
-			cartItem.setProduct(product);
+			cartItem.setProduct(newProduct);
 			cartItem.setCart(cart);
 
-			if (cart.getCartItems().contains(cartItem))
-				throw new CartHandlingException("The product with id: " + cartItemDto.getProductId()
-						+ " already added in your cart, remove it first then add again.");
-			else
-				cart.getCartItems().add(cartItem);
+			cart.getCartItems().add(cartItem);
+
 			cart.setTotalAmount(cart.getTotalAmount());
 
 			// Saving new cart item to the database.
@@ -155,8 +163,7 @@ public class CartServiceImpl implements ICartService {
 			this.cartRepo.save(cart);
 			return "Cart emptied successfully !!!";
 		} else
-			throw new UserHandlingException(
-					"Invalid userId. Please provide your own userId to empty your cart.");
+			throw new UserHandlingException("Invalid userId. Please provide your own userId to empty your cart.");
 	}
 
 	@Override
@@ -185,12 +192,13 @@ public class CartServiceImpl implements ICartService {
 				cartItem.setQuantity(dto.getQuantity());
 				cartItem.setProduct(newProduct);
 				cartItem.setCart(cart);
-				
+
 				for (CartItem c : cart.getCartItems()) {
-					if(c.getProduct().equals(newProduct))
-						throw new CartHandlingException("The product with id: "+newProduct.getProductId()+" is added more than one time in your cart. Remove duplicate product(s).");
+					if (c.getProduct().equals(newProduct))
+						throw new CartHandlingException("The product with id: " + newProduct.getProductId()
+								+ " is added more than one time in your cart. Remove duplicate product(s).");
 				}
-				
+
 				cart.getCartItems().add(cartItem);
 				cart.setTotalAmount(cart.getTotalAmount());
 				// Saving new cart item to the database.
@@ -202,8 +210,7 @@ public class CartServiceImpl implements ICartService {
 
 			return updatedCart;
 		} else
-			throw new UserHandlingException(
-					"Invalid userId. Please provide your own userId to add items your cart.");
+			throw new UserHandlingException("Invalid userId. Please provide your own userId to add items your cart.");
 	}
 
 }
