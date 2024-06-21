@@ -68,6 +68,10 @@ The database schema includes the following entities:
 - **Carts**: Stores information about user carts, including creation and update dates and total amounts.
 - **Cart Items**: Stores information about items in each cart, such as product IDs and quantities.
 
+## Entity Relationships
+![e-r-diagram](https://github.com/ramrajpatil/Grofers/assets/170900166/b463162a-a255-452f-bd57-8878ad1356fc)
+
+
 This structured approach ensures efficient data organization and supports the various functionalities of the Grofers App, facilitating a smooth and comprehensive e-commerce experience for both users and administrators.
 
 
