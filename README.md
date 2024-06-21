@@ -69,6 +69,7 @@ The database schema includes the following entities:
 - **Cart Items**: Stores information about items in each cart, such as product IDs and quantities.
 
 ## Entity Relationships
+<img src="", alt="" />
 ![e-r-diagram](https://github.com/ramrajpatil/Grofers/assets/170900166/b463162a-a255-452f-bd57-8878ad1356fc)
 
 
